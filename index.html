@@ -261,7 +261,20 @@
   .acc-panel { margin: 0; max-width: 528px; font: 400 20px/30px var(--inter); letter-spacing: -0.16px; color: var(--n200); }
   .acc-item:not([data-open]) .acc-panel { display: none; }
   .acc-item:not([data-open]):hover { background: #1c1c1c; }
-  .why-visual { width: 500px; max-width: 100%; aspect-ratio: 500 / 540; object-fit: cover; flex: none; }
+  .why-visual {
+    position: relative; flex: none;
+    width: 500px; max-width: 100%; aspect-ratio: 500 / 540;
+    background: var(--n900); overflow: hidden;
+  }
+  .why-visual .vis {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity .35s ease;
+  }
+  .why-visual[data-show="fastest"] .vis[data-v="fastest"],
+  .why-visual[data-show="security"] .vis[data-v="security"],
+  .why-visual[data-show="integrity"] .vis[data-v="integrity"],
+  .why-visual[data-show="premium"] .vis[data-v="premium"] { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .why-visual .vis { transition: none; } }
 
   /* ---------- pricing ---------- */
   .pricing { padding: 80px 64px; display: flex; flex-direction: column; align-items: center; gap: 40px; overflow: hidden; }
@@ -535,31 +548,36 @@
         <div class="why-grid">
           <div class="acc" id="why-acc">
             <div class="acc-item" data-open>
-              <button class="acc-btn" type="button" id="why-1" aria-expanded="true" aria-controls="why-p1">
+              <button class="acc-btn" type="button" data-visual="fastest" id="why-1" aria-expanded="true" aria-controls="why-p1">
                 <span class="acc-title">Fastest</span>
                 <span class="acc-panel" id="why-p1">We’re currently working on speed optimization, so say goodbye for lagging in midgame</span>
               </button>
             </div>
             <div class="acc-item">
-              <button class="acc-btn" type="button" id="why-2" aria-expanded="false" aria-controls="why-p2">
+              <button class="acc-btn" type="button" data-visual="security" id="why-2" aria-expanded="false" aria-controls="why-p2">
                 <span class="acc-title">Security First</span>
                 <span class="acc-panel" id="why-p2">We focused on building structure of the system to make sure your data is safe</span>
               </button>
             </div>
             <div class="acc-item">
-              <button class="acc-btn" type="button" id="why-3" aria-expanded="false" aria-controls="why-p3">
+              <button class="acc-btn" type="button" data-visual="integrity" id="why-3" aria-expanded="false" aria-controls="why-p3">
                 <span class="acc-title">Integrity Reason</span>
                 <span class="acc-panel" id="why-p3">No logs, no hidden routing. The servers do exactly what the app says they do.</span>
               </button>
             </div>
             <div class="acc-item">
-              <button class="acc-btn" type="button" id="why-4" aria-expanded="false" aria-controls="why-p4">
+              <button class="acc-btn" type="button" data-visual="premium" id="why-4" aria-expanded="false" aria-controls="why-p4">
                 <span class="acc-title">Premium for free</span>
                 <span class="acc-panel" id="why-p4">Early access members get the full premium tier free for the first month.</span>
               </button>
             </div>
           </div>
-          <img class="why-visual" src="assets/whyus.jpg" alt="Blue lightning bolt over a gaming scene, surrounded by 2 ms ping readouts" loading="lazy">
+          <div class="why-visual" id="why-visual" data-show="fastest">
+            <img class="vis" data-v="fastest" src="assets/why-fastest.jpg" alt="Blue lightning bolt over a gaming scene, surrounded by 2 ms ping readouts">
+            <img class="vis" data-v="security" src="assets/why-security.jpg" alt="Four user profiles with hidden names, protected by a blue shield" loading="lazy">
+            <img class="vis" data-v="integrity" src="assets/why-integrity.jpg" alt="Blurred user profiles behind a blue NOT FOR SALE label" loading="lazy">
+            <img class="vis" data-v="premium" src="assets/why-premium.jpg" alt="Basic plan card priced Free with a save 100% badge" loading="lazy">
+          </div>
         </div>
       </div>
     </section>
@@ -746,6 +764,7 @@
       item.toggleAttribute('data-open', open);
       b.setAttribute('aria-expanded', String(open));
     });
+    document.getElementById('why-visual').dataset.show = btn.dataset.visual;
   });
 
   // FAQ: click to open, click again to close
