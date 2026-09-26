@@ -68,15 +68,13 @@
     display: none;
   }
   .row[data-stripes] .gut::before { display: block; }
-  .row[data-stripes="full"] .gut::before { width: 100px; border: 0; }
-  .row[data-stripes="full"] .gut.l::before { right: 0; }
-  .row[data-stripes="full"] .gut.r::before { left: 0; }
-  .row[data-stripes="inner"] .gut::before { width: 69px; }
-  .row[data-stripes="inner"] .gut.l::before { right: 0; border-right: 0; }
-  .row[data-stripes="inner"] .gut.r::before { left: 0; border-left: 0; }
-  .row[data-stripes="outer"] .gut::before { width: 34px; }
-  .row[data-stripes="outer"] .gut.l::before { right: 67px; }
-  .row[data-stripes="outer"] .gut.r::before { left: 67px; }
+  /* stripes scale with the gutter so they reach the screen edge at any width
+     (at 1440px the gutter is 100px: full = 0–100, inner = 32–100, outer = 0–33) */
+  .row[data-stripes="full"] .gut::before { left: 0; right: 0; border: 0; }
+  .row[data-stripes="inner"] .gut.l::before { left: 32%; right: 0; border-right: 0; }
+  .row[data-stripes="inner"] .gut.r::before { left: 0; right: 32%; border-left: 0; }
+  .row[data-stripes="outer"] .gut.l::before { left: 0; width: 33%; border-left: 0; }
+  .row[data-stripes="outer"] .gut.r::before { right: 0; width: 33%; border-right: 0; }
   .col {
     position: relative;
     border-inline: 1px solid var(--n700);
