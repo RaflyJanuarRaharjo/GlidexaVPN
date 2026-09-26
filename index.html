@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GlideXAVPN — Stable ping. Zero lag.</title>
+<meta name="description" content="GlideXAVPN keeps your connection rock-solid so every match runs smooth. Get your first month free.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --n950: #0a0a0a;
+    --n900: #171717;
+    --n800: #262626;
+    --n700: #404040;
+    --n500: #737373;
+    --n400: #a3a3a3;
+    --n300: #d4d4d4;
+    --n200: #e5e5e5;
+    --n50: #fafafa;
+    --white: #ffffff;
+    --az28: #023b8f;
+    --az51: #2681de;
+    --az64: #4fa3f7;
+    --blue8: #0a0722;
+    --green: #22c55e;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --geist: "Geist", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --inter: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --hero-glow: radial-gradient(ellipse 100% 100% at 50% 0,
+      #4fa3f7 0%, #3c89dd 10.2%, #296fc3 20.5%, #1555a9 30.7%, #023b8f 41%,
+      #043071 53%, #062552 65%, #06234d 70%, #08162b 85%, #09101b 92.5%, #0a0a0a 100%);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--n950);
+    color: var(--n200);
+    font-family: var(--geist);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--az64); outline-offset: 3px; }
+
+  /* ---------- page grid: gutters + 1240 content column ---------- */
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1240px) minmax(0, 1fr);
+    background: var(--n950);
+  }
+  .gut { position: relative; overflow: hidden; }
+  .gut::before {
+    content: "";
+    position: absolute;
+    top: -1px; bottom: 0;
+    background: repeating-linear-gradient(to bottom, var(--n700) 0 1px, transparent 1px 16px);
+    border-inline: 1px solid var(--n700);
+    display: none;
+  }
+  .row[data-stripes] .gut::before { display: block; }
+  .row[data-stripes="full"] .gut::before { width: 100px; border: 0; }
+  .row[data-stripes="full"] .gut.l::before { right: 0; }
+  .row[data-stripes="full"] .gut.r::before { left: 0; }
+  .row[data-stripes="inner"] .gut::before { width: 69px; }
+  .row[data-stripes="inner"] .gut.l::before { right: 0; border-right: 0; }
+  .row[data-stripes="inner"] .gut.r::before { left: 0; border-left: 0; }
+  .row[data-stripes="outer"] .gut::before { width: 34px; }
+  .row[data-stripes="outer"] .gut.l::before { right: 67px; }
+  .row[data-stripes="outer"] .gut.r::before { left: 67px; }
+  .col {
+    position: relative;
+    border-inline: 1px solid var(--n700);
+    min-width: 0;
+  }
+  .bt { border-top: 1px solid var(--n700); }
+  .bb { border-bottom: 1px solid var(--n700); }
+
+  /* ---------- shared type ---------- */
+  .chip {
+    display: inline-flex; align-items: center; gap: 16px;
+    background: var(--n800); border: 1px solid var(--n800);
+    padding: 16px 24px;
+    font: 500 16px/20px var(--mono); color: var(--n200);
+  }
+  .chip::before {
+    content: ""; width: 36px; height: 16px;
+    background: linear-gradient(to bottom, var(--az64), var(--az51));
+  }
+  .h2 {
+    margin: 0;
+    font: 500 48px/96px var(--mono);
+    color: var(--n200);
+    text-align: center;
+    text-wrap: balance;
+  }
+  .lede {
+    margin: 0;
+    font: 400 16px/30px var(--geist);
+    letter-spacing: -0.16px;
+    color: var(--n200);
+    text-align: center;
+  }
+  .sec-head { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+  .btn-light {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--white); border: 1px solid var(--az51); border-radius: 8px;
+    padding: 16px 32px;
+    font: 500 24px/36px var(--mono); letter-spacing: -0.16px; color: var(--n950);
+    transition: transform .15s ease, box-shadow .2s ease;
+  }
+  .btn-light:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(79,163,247,.35); }
+
+  /* ---------- banner + header ---------- */
+  .banner {
+    background: linear-gradient(to right, var(--blue8), var(--az28) 50%, var(--blue8));
+    padding: 24px 16px;
+    text-align: center;
+    font: 500 16px/20px var(--mono); color: var(--n200);
+  }
+  .site-head {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+    background: var(--n950);
+    border-block: 1px solid var(--n700);
+    padding-inline: 100px;
+  }
+  .site-head .inner {
+    position: relative;
+    max-width: 1240px; margin-inline: auto;
+    border: 1px solid var(--n700); border-block: 0;
+    padding: 24px 40px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; height: 52px; }
+  .brand svg { width: 23px; height: 22px; flex: none; }
+  .brand span { font: 500 24px/36px var(--geist); letter-spacing: -0.15px; color: var(--n200); }
+  .nav {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    display: flex; gap: 32px;
+    font: 500 16px/20px var(--mono); color: var(--n200); white-space: nowrap;
+  }
+  .nav a { transition: color .15s; }
+  .nav a:hover { color: var(--az64); }
+  .btn-dl {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: linear-gradient(to right, var(--az28), var(--az64));
+    border: 1px solid var(--az51); border-radius: 8px;
+    padding: 16px 32px;
+    font: 500 16px/20px var(--mono); letter-spacing: -0.16px; color: var(--n200);
+    white-space: nowrap;
+    transition: filter .15s;
+  }
+  .btn-dl:hover { filter: brightness(1.15); }
+
+  /* ---------- hero ---------- */
+  .hero {
+    background: var(--hero-glow);
+    padding: 124px 64px 0;
+    display: flex; flex-direction: column; align-items: center; gap: 40px;
+    overflow: hidden;
+  }
+  .hero .dots {
+    position: absolute; left: 0; top: 50.05%; width: 100%;
+    mix-blend-mode: hard-light; pointer-events: none;
+  }
+  .hero-copy { position: relative; display: flex; flex-direction: column; gap: 16px; max-width: 1112px; text-align: center; }
+  .hero h1 { margin: 0; font: 500 64px/96px var(--mono); color: var(--n200); text-wrap: balance; }
+  .hero-copy p { margin: 0; font: 400 20px/48px var(--geist); color: var(--n200); }
+  .hero .btn-light { position: relative; }
+
+  .phone-wrap {
+    position: relative;
+    width: min(426px, 100%);
+    aspect-ratio: 426 / 445;
+    clip-path: inset(-12px -12px 0 -12px);
+  }
+  .phone {
+    position: absolute; inset: 0 0 auto 0;
+    aspect-ratio: 426 / 880;
+    background: #000;
+    border: 6px solid #7d8383;
+    border-radius: 15.7% / 7.6%;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.55), 0 -1px 2px rgba(255,255,255,.35);
+  }
+  .phone .screen {
+    position: absolute; left: 2.9%; right: 2.9%; top: 1.38%; bottom: 1.38%;
+    border-radius: 12.6% / 5.8%;
+    overflow: hidden;
+    background: #111a2b;
+  }
+  .phone .screen img { width: 100%; }
+  .phone .key { position: absolute; width: 3px; background: linear-gradient(to right, #9aa0a0, #5f6464); border-radius: 1px; }
+  .phone .k1 { left: -9px; top: 19%; height: 3.6%; }
+  .phone .k2 { left: -9px; top: 26.2%; height: 7.4%; }
+  .phone .k3 { left: -9px; top: 35.8%; height: 7.4%; }
+  .phone .k4 { right: -9px; top: 31.3%; height: 11.8%; }
+
+  /* ---------- waitlist strip ---------- */
+  .strip { background: var(--n950); border-top: 1px solid var(--n700); }
+  .strip .ticks {
+    height: 32px;
+    background: repeating-linear-gradient(to right, var(--n700) 0 1px, transparent 1px 16px);
+  }
+  .strip .mid {
+    display: flex; justify-content: center;
+    border-block: 1px solid var(--n700);
+  }
+  .strip .box {
+    border-inline: 1px solid var(--n700);
+    padding: 24px 64px;
+    font: 500 24px/20px var(--mono); color: var(--n200); white-space: nowrap;
+  }
+  .strip .ticks:last-child { height: 33px; border-bottom: 1px solid var(--n700); }
+
+  /* ---------- partners marquee ---------- */
+  .partners { border-bottom: 1px solid var(--n700); padding-block: 62px 61px; overflow: hidden; }
+  .marquee {
+    max-width: 1191px; margin-inline: auto; overflow: hidden; opacity: .8;
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+  .track { display: flex; gap: 54px; width: max-content; animation: slide 32s linear infinite; }
+  .track:hover { animation-play-state: paused; }
+  .logo-item { display: flex; align-items: center; gap: 20px; flex: none; height: 38px; }
+  .logo-item svg { width: 32px; height: auto; flex: none; }
+  .logo-item span { font: 600 24px/30px var(--inter); letter-spacing: -0.15px; color: var(--n300); white-space: nowrap; }
+  @keyframes slide { to { transform: translateX(calc(-50% - 27px)); } }
+  @media (prefers-reduced-motion: reduce) { .track { animation: none; } }
+
+  /* ---------- app features ---------- */
+  .app { padding: 80px 64px; display: flex; flex-direction: column; align-items: center; gap: 56px; overflow: hidden; }
+  .app .dots-diff {
+    position: absolute; top: 399px; left: -11%; width: 126%;
+    mix-blend-mode: difference; opacity: .24; pointer-events: none;
+  }
+  .app-head { position: relative; display: flex; flex-direction: column; align-items: center; gap: 40px; width: 100%; }
+  .features { position: relative; width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+  .feature { display: flex; flex-direction: column; gap: 32px; }
+  .feature .txt { padding: 16px; display: flex; flex-direction: column; gap: 16px; letter-spacing: -0.16px; }
+  .feature h3 { margin: 0; font: 700 24px/36px var(--mono); color: var(--white); }
+  .feature p { margin: 0; font: 400 16px/30px var(--geist); color: var(--n200); }
+  .feature img { width: 100%; max-width: 360px; aspect-ratio: 1; object-fit: cover; background: var(--n900); }
+
+  /* ---------- why us ---------- */
+  .why { padding: 80px 64px; display: flex; flex-direction: column; align-items: center; gap: 40px; }
+  .why-body { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 56px; }
+  .why-grid { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .acc { width: 574px; max-width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  .acc-item { background: var(--n900); padding: 24px; }
+  .acc-btn { width: 100%; padding: 10px; display: flex; flex-direction: column; gap: 16px; text-align: left; }
+  .acc-title { display: flex; align-items: center; gap: 8px; font: 500 24px/36px var(--mono); letter-spacing: -0.16px; color: var(--white); }
+  .acc-title::before { content: ""; width: 4px; height: 20px; flex: none; background: #d9d9d9; transition: background .2s; }
+  .acc-item[data-open] .acc-title::before { background: linear-gradient(to bottom, var(--az51), var(--az64)); }
+  .acc-panel { margin: 0; max-width: 528px; font: 400 20px/30px var(--inter); letter-spacing: -0.16px; color: var(--n200); }
+  .acc-item:not([data-open]) .acc-panel { display: none; }
+  .acc-item:not([data-open]):hover { background: #1c1c1c; }
+  .why-visual { width: 500px; max-width: 100%; aspect-ratio: 500 / 540; object-fit: cover; flex: none; }
+
+  /* ---------- pricing ---------- */
+  .pricing { padding: 80px 64px; display: flex; flex-direction: column; align-items: center; gap: 40px; overflow: hidden; }
+  .pricing .halftone {
+    position: absolute; inset: 0; opacity: .2; pointer-events: none;
+    background-image: radial-gradient(circle, var(--az51) 1.6px, transparent 2px);
+    background-size: 8px 8px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 0% 0%, #000 0%, transparent 70%), radial-gradient(ellipse 90% 45% at 50% 100%, #000 0%, transparent 70%);
+    mask-image: radial-gradient(ellipse 70% 60% at 0% 0%, #000 0%, transparent 70%), radial-gradient(ellipse 90% 45% at 50% 100%, #000 0%, transparent 70%);
+  }
+  .pricing .dots-diff { position: absolute; top: 399px; left: -11%; width: 126%; mix-blend-mode: difference; opacity: .24; pointer-events: none; }
+  .pricing-head { position: relative; display: flex; flex-direction: column; align-items: center; gap: 40px; width: 100%; }
+  .plans { position: relative; display: grid; grid-template-columns: repeat(3, 354px); gap: 40px; }
+  .plan { background: var(--n900); border: 1px solid var(--n800); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .plan h3 { margin: 0; font: 600 20px/30px var(--geist); color: var(--n50); }
+  .price { display: flex; align-items: center; gap: 16px; }
+  .price b { font: 400 16px/30px var(--mono); color: var(--n400); font-variant-numeric: tabular-nums; }
+  .badge {
+    background: linear-gradient(to bottom, var(--az51), var(--az64));
+    border: 1px solid var(--az51); border-radius: 4px;
+    padding: 4px 16px;
+    font: 400 12px/18px var(--mono); color: var(--n50); white-space: nowrap;
+  }
+  .plan-head { display: flex; flex-direction: column; gap: 4px; }
+  .perks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .perks li { display: flex; align-items: center; gap: 10px; font: 400 12px/24px var(--geist); color: var(--n50); }
+  .perks li.dim { opacity: .8; }
+  .perks svg { width: 16px; height: 16px; flex: none; }
+  .perks svg.s14 { width: 14px; height: 14px; margin-inline: 1px; }
+
+  /* ---------- faq ---------- */
+  .faq { padding: 80px 64px; display: flex; flex-direction: column; align-items: center; gap: 40px; }
+  .faq .sub { margin: 0; font: 400 20px/24px var(--geist); color: var(--white); text-align: center; }
+  .faq-list { width: 100%; max-width: 1110px; display: flex; flex-direction: column; gap: 32px; }
+  .q {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    padding: 32px 40px; border-radius: 8px;
+    background: var(--n800);
+    text-align: left;
+    transition: background-color .2s;
+  }
+  .q:hover { background: #2d2d2d; }
+  .q .qt { font: 500 20px/24px var(--inter); color: var(--n500); }
+  .q .qa { display: none; font: 500 20px/30px var(--inter); color: var(--n50); max-width: 936px; }
+  .q svg { width: 24px; height: 24px; flex: none; transition: transform .2s; }
+  .q svg path { stroke: var(--n500); }
+  .q[aria-expanded="true"] { background: linear-gradient(to bottom, #2681de, #4fa3f7); }
+  .q[aria-expanded="true"] .qt { display: none; }
+  .q[aria-expanded="true"] .qa { display: block; }
+  .q[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .q[aria-expanded="true"] svg path { stroke: var(--n50); }
+
+  /* ---------- cta ---------- */
+  .cta { background: var(--hero-glow); padding: 124px 64px; display: flex; flex-direction: column; align-items: center; gap: 40px; overflow: hidden; }
+  .cta .dots { position: absolute; top: 0; left: -0.48%; width: 103.2%; mix-blend-mode: hard-light; pointer-events: none; }
+  .cta-copy { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .cta-copy p { margin: 0; font: 400 24px/48px var(--geist); color: var(--n200); }
+  .cta .btn-light { position: relative; font-weight: 400; }
+
+  /* ---------- footer ---------- */
+  .foot-top { padding: 80px 48px 64px; display: flex; align-items: flex-start; justify-content: space-between; gap: 48px; border-bottom: 1px solid var(--n700); }
+  .foot-top .brand span { font-family: var(--inter); }
+  .foot-links { display: flex; gap: 240px; }
+  .foot-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+  .foot-links a, .foot-links li > span { font: 400 15px/1.6 var(--mono); color: var(--white); white-space: nowrap; }
+  .foot-links a:hover { color: var(--az64); }
+  .foot-bottom { padding: 46px 48px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .foot-bottom small { font: 400 16px/24px var(--mono); color: var(--n200); }
+  .regs { display: flex; align-items: center; justify-content: space-between; width: 221px; flex: none; }
+  .regs img { height: auto; }
+
+  section[id], div[id] { scroll-margin-top: 110px; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1439px) {
+    .site-head { padding-inline: 0; }
+    .site-head .inner { border-inline: 0; }
+  }
+  @media (max-width: 1240px) {
+    .plans { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; width: 100%; }
+    .foot-links { gap: clamp(32px, 8vw, 240px); }
+    .why-grid { flex-direction: column; }
+    .acc { width: 100%; }
+  }
+  @media (max-width: 960px) {
+    .nav { display: none; }
+    .site-head .inner { padding: 16px; }
+    .hero { padding: 72px 24px 0; }
+    .hero h1 { font-size: 44px; line-height: 60px; }
+    .hero-copy p { font-size: 18px; line-height: 30px; }
+    .h2 { font-size: 36px; line-height: 52px; }
+    .app, .why, .pricing, .faq { padding: 64px 24px; }
+    .cta { padding: 88px 24px; }
+    .features { grid-template-columns: minmax(0, 1fr); max-width: 420px; gap: 40px; }
+    .feature img { max-width: 100%; }
+    .plans { grid-template-columns: minmax(0, 1fr); max-width: 420px; }
+    .foot-top { flex-direction: column; padding: 56px 24px 48px; }
+    .foot-links { flex-wrap: wrap; gap: 32px 64px; }
+    .foot-bottom { flex-direction: column; align-items: flex-start; padding: 32px 24px; }
+    .q { padding: 24px; }
+  }
+  @media (max-width: 560px) {
+    .banner { font-size: 12px; line-height: 18px; padding-block: 14px; }
+    .brand span { font-size: 18px; }
+    .btn-dl { padding: 12px 16px; font-size: 13px; }
+    .hero { padding: 56px 16px 0; gap: 32px; }
+    .hero h1 { font-size: 30px; line-height: 42px; }
+    .hero-copy p { font-size: 16px; line-height: 26px; }
+    .btn-light { font-size: 18px; line-height: 28px; padding: 14px 24px; }
+    .h2 { font-size: 26px; line-height: 38px; }
+    .app, .why, .pricing, .faq { padding: 56px 16px; }
+    .cta { padding: 72px 16px; }
+    .cta-copy p { font-size: 17px; line-height: 28px; }
+    .strip .ticks { height: 24px; }
+    .strip .box { font-size: 15px; padding: 18px 20px; }
+    .partners { padding-block: 40px; }
+    .logo-item span { font-size: 18px; }
+    .acc-item { padding: 12px; }
+    .acc-title { font-size: 19px; line-height: 30px; }
+    .acc-panel { font-size: 16px; line-height: 26px; }
+    .faq .sub { font-size: 16px; line-height: 24px; }
+    .q .qt, .q .qa { font-size: 16px; line-height: 24px; }
+    .q { padding: 20px 18px; gap: 12px; }
+    .faq-list { gap: 16px; }
+    .foot-bottom small { font-size: 13px; line-height: 20px; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="lg-brand" viewBox="0 0 23 22">
+      <path d="M23 0L18.6021 4.37666H8.96826C8.48691 4.37666 6.89405 4.66844 5.77717 6.18568C4.66028 7.70292 4.57622 8.05305 4.57622 8.22812V17.6941H14.0853C15.0956 17.6941 17.4011 15.8143 17.4011 15.8143C17.4011 15.8143 18.6021 14.5889 18.6021 13.7719V10.9708H12.2429V7.29443H22.584V14.5305C22.584 14.5305 22.5245 15.78 21.9897 16.6897C21.4548 17.5993 21.1935 18.4909 20.3256 19.374C19.4405 20.2746 18.7512 20.6049 17.5917 21.1247C16.4491 21.6369 15.2739 22 14.5013 22H0.237712V6.71088C0.237712 6.12732 1.08665 4.10647 2.19895 2.80106C3.06673 1.78263 3.62533 1.28382 4.87338 0.641088C5.74582 0.191791 7.31007 0 7.31007 0H23Z" fill="white"/>
+      <path d="M9.50905 8.69496L19.8501 1.34218L14.3824 7.17772H17.2352L0 22L12.0052 8.69496H9.50905Z" fill="#FFCD00"/>
+    </symbol>
+    <symbol id="lg-p1" viewBox="0 0 32 38"><path d="M15.9647 4.0265V19.2141L12.5033 17.2362C6.35762 13.7042 2.54304 7.13466 2.54304 0H0V17.3775C0 23.0287 3.24944 28.2561 8.40618 30.7285L16.0353 34.4018V19.2141L19.4967 21.1921C25.6424 24.7241 29.457 31.2936 29.457 38.4283H32V21.0508C32 15.3996 28.7506 10.1722 23.5938 7.69978L15.9647 4.0265Z" fill="#D4D4D4"/></symbol>
+    <symbol id="lg-p2" viewBox="0 0 32 36"><path d="M24.842 21.4037L29.7543 16.4914C29.7543 13.123 28.9121 9.89491 27.3683 7.08789L15.9297 17.6844V35.2984H18.1051C25.7543 35.2984 31.9999 29.123 31.9999 21.4037H24.842Z" fill="#D4D4D4"/><path d="M7.15789 13.8947L2.24561 18.807C2.24561 22.1754 3.08772 25.4035 4.63158 28.2105L16.0702 17.614V0H13.8947C6.24562 0 0 6.17544 0 13.8947H7.15789Z" fill="#D4D4D4"/></symbol>
+    <symbol id="lg-p3" viewBox="0 0 32 32"><path d="M16 0C7.19028 0 0 7.19029 0 16C0 24.8097 7.19028 32 16 32C24.8097 32 32 24.8097 32 16C32 7.19029 24.8097 0 16 0ZM4.46964 16C4.46964 12.6964 5.89474 9.65183 8.16194 7.57896C9.06882 6.73685 10.6235 6.99595 11.2713 8.09717L15.2874 15.0284C15.6761 15.6761 15.6761 16.4534 15.2874 17.1012L11.2713 24.0324C10.6235 25.1984 9.06883 25.3927 8.09717 24.4858C5.89474 22.2834 4.46964 19.3037 4.46964 16ZM20.7287 23.9028L16.7125 16.9717C16.3239 16.3239 16.3239 15.5466 16.7125 14.8988L20.7287 7.9676C21.3765 6.86639 22.8664 6.60729 23.8381 7.44939C26.1053 9.52227 27.5304 12.5668 27.5304 15.8704C27.5304 19.1741 26.1053 22.2186 23.8381 24.2915C22.8664 25.3279 21.3765 25.0688 20.7287 23.9028Z" fill="#D4D4D4"/></symbol>
+    <symbol id="lg-p4" viewBox="0 0 32 31"><path d="M0 7.96391H8.81633C9.79592 7.96391 10.5796 8.75371 10.5796 9.74097C10.5796 10.7282 9.79592 11.518 8.81633 11.518H0C0.326531 15.9936 4.04898 19.482 8.5551 19.482H8.88163C9.86122 19.482 10.6449 20.2718 10.6449 21.259C10.6449 22.2463 9.86122 23.0361 8.88163 23.0361H8.5551C4.04898 23.0361 0.326531 26.5244 0 31H23.4449C27.951 31 31.6735 27.5117 32 23.0361H23.1837C22.2041 23.0361 21.4204 22.2463 21.4204 21.259C21.4204 20.2718 22.2041 19.482 23.1837 19.482H32C31.6735 15.0064 27.951 11.518 23.4449 11.518H23.1184C22.1388 11.518 21.3551 10.7282 21.3551 9.74097C21.3551 8.75371 22.1388 7.96391 23.1184 7.96391H23.4449C27.951 7.96391 31.6735 4.47558 32 0H8.5551C4.04898 0 0.326531 3.48832 0 7.96391Z" fill="#D4D4D4"/></symbol>
+    <symbol id="lg-p5" viewBox="0 0 32 32"><path d="M31.4614 28.084L24.5572 17.8755C24.3947 17.6325 24.1511 17.3894 23.9074 17.2274L23.3388 16.8223C22.689 16.3362 22.689 15.4449 23.3388 14.9588L23.8262 14.6347C24.0698 14.4727 24.3135 14.2296 24.476 13.9866L31.5426 3.9401C32.1112 3.04888 32.1924 1.9146 31.5426 1.1044C30.7303 0.0511452 29.2683 -0.191912 28.2123 0.537267L17.9779 7.42396C17.7342 7.586 17.4906 7.82906 17.3281 8.07212L16.922 8.63926C16.4346 9.28742 15.5412 9.28742 15.0538 8.63926L14.7289 8.15313C14.5664 7.91008 14.3228 7.66702 14.0791 7.50498L4.00712 0.456242C3.11364 -0.110897 1.97648 -0.191917 1.16423 0.456242C0.108295 1.26644 -0.135379 2.72481 0.595651 3.77806L7.49982 13.9866C7.66228 14.2296 7.90595 14.4727 8.14963 14.6347L8.71821 15.0398C9.36801 15.5259 9.36801 16.4172 8.71821 16.9033L8.23085 17.2274C7.98717 17.3894 7.74351 17.6325 7.58105 17.8755L0.433202 28.003C-0.216603 28.9753 -0.135375 30.2716 0.676881 31.0818C1.48914 31.892 2.78874 32.054 3.76344 31.4059L13.9979 24.5192C14.2415 24.3571 14.4852 24.1141 14.6477 23.871L15.0538 23.3039C15.5412 22.6557 16.4346 22.6557 16.922 23.3039L17.2469 23.79C17.4093 24.033 17.653 24.2761 17.8967 24.4381L28.1311 31.5679C29.1058 32.216 30.4054 32.135 31.2177 31.3248C32.0299 30.3526 32.1112 29.0563 31.4614 28.084Z" fill="#D4D4D4"/></symbol>
+
+    <symbol id="ic-clock" viewBox="0 0 14 14" fill="none"><path d="M7.00033 12.8333C10.222 12.8333 12.8337 10.2217 12.8337 7C12.8337 3.77834 10.222 1.16667 7.00033 1.16667C3.77866 1.16667 1.16699 3.77834 1.16699 7C1.16699 10.2217 3.77866 12.8333 7.00033 12.8333Z" stroke="#FAFAFA"/><path d="M7 4.66667V7.00001L8.16667 8.16667" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-support" viewBox="0 0 14 14" fill="none"><path d="M9.91625 6.30292C9.91625 6.10108 9.91625 6.00017 9.94658 5.91033C10.0347 5.649 10.2674 5.54808 10.5007 5.44192C10.7621 5.32233 10.8927 5.26283 11.0228 5.25233C11.1698 5.24067 11.3174 5.27217 11.4434 5.34275C11.6102 5.43608 11.7269 5.61458 11.8459 5.75925C12.396 6.42775 12.6713 6.762 12.7717 7.13008C12.8533 7.42758 12.8533 7.73908 12.7717 8.036C12.6252 8.57383 12.1615 9.02417 11.8179 9.44183C11.6423 9.65475 11.5542 9.7615 11.4434 9.82392C11.3152 9.89499 11.1689 9.92646 11.0228 9.91433C10.8927 9.90383 10.7621 9.84433 10.5002 9.72475C10.2668 9.61858 10.0347 9.51767 9.94658 9.25633C9.91625 9.1665 9.91625 9.06558 9.91625 8.86375V6.30292ZM4.08291 6.30292C4.08291 6.04858 4.07591 5.8205 3.87058 5.642C3.79591 5.57725 3.69675 5.53233 3.499 5.44192C3.23708 5.32292 3.10641 5.26283 2.97633 5.25233C2.58725 5.22083 2.37783 5.48683 2.15383 5.75983C1.60316 6.42775 1.32783 6.762 1.22691 7.13067C1.14572 7.42718 1.14572 7.74007 1.22691 8.03658C1.37391 8.57383 1.83825 9.02475 2.18125 9.44183C2.39766 9.70433 2.60475 9.94408 2.97633 9.91433C3.10641 9.90383 3.23708 9.84433 3.499 9.72475C3.69733 9.63492 3.79591 9.58942 3.87058 9.52467C4.07591 9.34617 4.08291 9.11808 4.08291 8.86433V6.30292Z" stroke="#FAFAFA"/><path d="M2.91602 5.25C2.91602 3.31683 4.74418 1.75 6.99935 1.75C9.25452 1.75 11.0827 3.31683 11.0827 5.25" stroke="#FAFAFA" stroke-linecap="square" stroke-linejoin="round"/><path d="M11.083 9.91666V10.3833C11.083 11.4141 10.0388 12.25 8.74967 12.25H7.58301" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-lock" viewBox="0 0 14 14" fill="none"><path d="M9.62305 5.24999V3.79166C9.62305 3.44694 9.55515 3.10559 9.42323 2.78711C9.29131 2.46863 9.09796 2.17925 8.8542 1.9355C8.61045 1.69175 8.32107 1.49839 8.00259 1.36647C7.68411 1.23455 7.34277 1.16666 6.99805 1.16666C6.65333 1.16666 6.31198 1.23455 5.9935 1.36647C5.67502 1.49839 5.38565 1.69175 5.14189 1.9355C4.89814 2.17925 4.70478 2.46863 4.57286 2.78711C4.44094 3.10559 4.37305 3.44694 4.37305 3.79166V5.24999" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.87272 5.25H6.12272C4.76122 5.25 4.07989 5.25 3.56422 5.52533C3.15717 5.74303 2.82383 6.07657 2.60639 6.48375C2.33105 6.99883 2.33105 7.67958 2.33105 9.04225C2.33105 10.4038 2.33105 11.0845 2.60697 11.6002C2.82451 12.0071 3.15784 12.3405 3.5648 12.558C4.08047 12.8333 4.76122 12.8333 6.12272 12.8333H7.87272C9.23422 12.8333 9.91556 12.8333 10.4306 12.558C10.8376 12.3405 11.1709 12.0071 11.3885 11.6002C11.6644 11.0845 11.6644 10.4038 11.6644 9.04167C11.6644 7.67958 11.6644 6.99883 11.3885 6.48317C11.1709 6.0762 10.8376 5.74287 10.4306 5.52533C9.91556 5.25 9.23481 5.25 7.87272 5.25Z" stroke="#FAFAFA" stroke-linecap="round"/><path d="M6.99772 10.2083C7.64205 10.2083 8.16439 9.686 8.16439 9.04167C8.16439 8.39733 7.64205 7.875 6.99772 7.875C6.35339 7.875 5.83105 8.39733 5.83105 9.04167C5.83105 9.686 6.35339 10.2083 6.99772 10.2083Z" stroke="#FAFAFA"/></symbol>
+    <symbol id="ic-magic" viewBox="0 0 16 16" fill="none"><path d="M12.9997 1.95868V3.00001M12.9997 3.00001V4.04201M12.9997 3.00001H12.1663M12.9997 3.00001H13.833M8.95101 5.38934C8.53367 3.89534 8.21501 2.66668 7.33301 2.66668C6.45101 2.66668 6.13301 3.89534 5.71501 5.38934C5.54567 5.99601 5.46034 6.30001 5.21301 6.54734C4.96634 6.79401 4.66234 6.87934 4.05567 7.04868C2.56167 7.46668 1.33301 7.78468 1.33301 8.66668C1.33301 9.54868 2.56167 9.86668 4.05567 10.2847C4.66234 10.454 4.96634 10.5387 5.21301 10.786C5.46034 11.0333 5.54567 11.3367 5.71501 11.944C6.13301 13.438 6.45167 14.6667 7.33301 14.6667C8.21434 14.6667 8.53301 13.438 8.95101 11.944C9.12101 11.3373 9.20567 11.0333 9.45301 10.786C9.69967 10.5393 10.0037 10.454 10.6103 10.2847C12.1043 9.86668 13.333 9.54868 13.333 8.66668C13.333 7.78468 12.1043 7.46668 10.6103 7.04868C10.0037 6.87934 9.69967 6.79401 9.45301 6.54734C9.20567 6.30001 9.12101 5.99668 8.95101 5.38934ZM14.6663 3.00001L14.365 2.90001C13.8997 2.74468 13.667 2.66668 13.4997 2.50001C13.333 2.33334 13.255 2.10001 13.0997 1.63468L12.9997 1.33334L12.8997 1.63468C12.7443 2.10001 12.6663 2.33268 12.4997 2.50001C12.333 2.66668 12.0997 2.74468 11.6343 2.90001L11.333 3.00001L11.6343 3.10001C12.0997 3.25534 12.3323 3.33334 12.4997 3.50001C12.6663 3.66668 12.7443 3.90001 12.8997 4.36534L12.9997 4.66668L13.0997 4.36534C13.255 3.90001 13.333 3.66734 13.4997 3.50001C13.6663 3.33334 13.8997 3.25534 14.365 3.10001L14.6663 3.00001Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-ticket" viewBox="0 0 14 14" fill="none"><path d="M4.66602 9.91669V11.9584M4.66602 2.04169V4.08335M8.75985 5.5026L9.06785 6.12385C9.10985 6.21019 9.22185 6.29302 9.31635 6.30935L9.8746 6.40269C10.2316 6.46277 10.3156 6.72352 10.0583 6.98135L9.62435 7.41885C9.58635 7.46189 9.55846 7.51288 9.54271 7.56809C9.52697 7.6233 9.52377 7.68133 9.53335 7.73794L9.6576 8.27985C9.7556 8.7086 9.52985 8.87485 9.1536 8.65027L8.63035 8.33819C8.57689 8.31018 8.51745 8.29555 8.4571 8.29555C8.39675 8.29555 8.3373 8.31018 8.28385 8.33819L7.76118 8.65027C7.38668 8.87427 7.15918 8.70685 7.25718 8.27985L7.38143 7.73794C7.39101 7.68133 7.38782 7.6233 7.37207 7.56809C7.35633 7.51288 7.32843 7.46189 7.29043 7.41885L6.85643 6.98135C6.60093 6.72352 6.68318 6.46219 7.04018 6.40269L7.59843 6.30935C7.65027 6.29747 7.69903 6.27481 7.74154 6.24285C7.78405 6.21089 7.81936 6.17035 7.84518 6.12385L8.1526 5.5026C8.3206 5.16602 8.5936 5.16602 8.75985 5.5026Z" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.8329 5.17944C12.7938 4.27994 12.6847 3.69427 12.3779 3.2311C12.2034 2.96721 11.9845 2.73551 11.731 2.54627C11.0508 2.04169 10.0912 2.04169 8.17087 2.04169H5.82879C3.90904 2.04169 2.94887 2.04169 2.2687 2.54627C2.0167 2.73294 1.79795 2.96452 1.6212 3.2311C1.31495 3.69427 1.20587 4.27994 1.1662 5.17944C1.16037 5.33285 1.2922 5.45069 1.43745 5.45069C2.24595 5.45069 2.90162 6.14427 2.90162 7.00002C2.90162 7.85577 2.24595 8.54935 1.43745 8.54935C1.2922 8.54935 1.15979 8.66719 1.16679 8.82119C1.20587 9.7201 1.31495 10.3058 1.62179 10.7695C1.79635 11.0332 2.01522 11.2647 2.2687 11.4538C2.94887 11.9584 3.90904 11.9584 5.82879 11.9584H8.17087C10.0906 11.9584 11.0508 11.9584 11.731 11.4538C11.983 11.2671 12.2017 11.0355 12.3785 10.7689C12.6847 10.3058 12.7938 9.7201 12.8329 8.8206V5.17944Z" stroke="#FAFAFA" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-marketing" viewBox="0 0 14 14" fill="none"><path d="M10.5003 10.5C11.789 10.5 12.8337 8.41068 12.8337 5.83335C12.8337 3.25602 11.789 1.16669 10.5003 1.16669C9.21166 1.16669 8.16699 3.25602 8.16699 5.83335C8.16699 8.41068 9.21166 10.5 10.5003 10.5Z" stroke="#FAFAFA"/><path d="M10.5003 1.16669C8.69024 1.16669 4.93824 2.55385 2.78341 3.41485C1.79641 3.80919 1.16699 4.77052 1.16699 5.83335C1.16699 6.89619 1.79699 7.85752 2.78341 8.25185C4.93824 9.11285 8.69024 10.5 10.5003 10.5" stroke="#FAFAFA"/><path d="M6.4166 12.8333L5.28318 12.2092C4.67808 11.8743 4.18725 11.3657 3.87406 10.7491C3.56087 10.1325 3.43969 9.43616 3.52618 8.75" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-globe" viewBox="0 0 14 14" fill="none"><path d="M7.00033 12.8334C10.222 12.8334 12.8337 10.2217 12.8337 7.00002C12.8337 3.77836 10.222 1.16669 7.00033 1.16669C3.77866 1.16669 1.16699 3.77836 1.16699 7.00002C1.16699 10.2217 3.77866 12.8334 7.00033 12.8334Z" stroke="#FAFAFA"/><path d="M4.66699 7.00002C4.66699 10.5 7.00033 12.8334 7.00033 12.8334C7.00033 12.8334 9.33366 10.5 9.33366 7.00002C9.33366 3.50002 7.00033 1.16669 7.00033 1.16669C7.00033 1.16669 4.66699 3.50002 4.66699 7.00002Z" stroke="#FAFAFA" stroke-linejoin="round"/><path d="M12.25 8.75H1.75M12.25 5.25H1.75" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-task" viewBox="0 0 14 14" fill="none"><path d="M4.66406 8.75002H6.66431M4.66406 6.41669H9.33073M8.45573 1.16669H5.53906C5.307 1.16669 5.08444 1.25887 4.92034 1.42297C4.75625 1.58706 4.66406 1.80962 4.66406 2.04169C4.66406 2.27375 4.75625 2.49631 4.92034 2.66041C5.08444 2.8245 5.307 2.91669 5.53906 2.91669H8.45573C8.68779 2.91669 8.91035 2.8245 9.07445 2.66041C9.23854 2.49631 9.33073 2.27375 9.33073 2.04169C9.33073 1.80962 9.23854 1.58706 9.07445 1.42297C8.91035 1.25887 8.68779 1.16669 8.45573 1.16669Z" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.33105 2.04169C10.2376 2.0691 10.7777 2.17002 11.1516 2.54452C11.665 3.05669 11.665 3.8821 11.665 5.53119V9.33335C11.665 10.983 11.665 11.8079 11.1516 12.3206C10.6395 12.8334 9.81405 12.8334 8.16497 12.8334H5.83164C4.1808 12.8334 3.35597 12.8334 2.8438 12.3206C2.33164 11.8079 2.33105 10.983 2.33105 9.33335V5.53177C2.33105 3.8821 2.33105 3.05669 2.8438 2.54452C3.21772 2.17002 3.75847 2.0691 4.66439 2.04169" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-monitor" viewBox="0 0 14 14" fill="none"><path d="M6.70345 11.0834H4.37012" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.8291 11.0833V8.75" stroke="#FAFAFA"/><path d="M11.3708 7H10.2041L10.3499 7.58333H11.2249L11.3708 7Z" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.74512 8.75C8.74512 7.92517 8.74512 7.51275 9.00178 7.25667C9.25787 7 9.67028 7 10.4951 7H11.0785C11.9033 7 12.3157 7 12.5718 7.25667C12.8285 7.51275 12.8285 7.92517 12.8285 8.75V11.0833C12.8285 11.9082 12.8285 12.3206 12.5718 12.5767C12.3157 12.8333 11.9033 12.8333 11.0785 12.8333H10.4951C9.67028 12.8333 9.25787 12.8333 9.00178 12.5767C8.74512 12.3206 8.74512 11.9082 8.74512 11.0833V8.75Z" stroke="#FAFAFA"/><path d="M6.70378 8.75002H4.48711C2.91969 8.75002 2.13628 8.75002 1.64919 8.27402C1.16211 7.79802 1.16211 7.0321 1.16211 5.50027V4.41585C1.16211 2.88402 1.16211 2.11752 1.64919 1.6421C2.13628 1.16669 2.91969 1.16669 4.48711 1.16669H8.92044C10.4879 1.16669 11.2713 1.16669 11.7584 1.64269C12.2454 2.11869 12.2454 2.8846 12.2454 4.41644V4.95835" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-wifi" viewBox="0 0 16 16" fill="none"><path d="M1.33301 5.54668C3.16642 3.90683 5.5399 3.00024 7.99967 3.00024C10.4594 3.00024 12.8329 3.90683 14.6663 5.54668M3.33301 8.23935C4.5792 7.01784 6.25466 6.33364 7.99967 6.33364C9.74469 6.33364 11.4201 7.01784 12.6663 8.23935M5.66634 10.6194C6.28944 10.0086 7.12716 9.66649 7.99967 9.66649C8.87218 9.66649 9.70991 10.0086 10.333 10.6194M8.08367 12.8334H7.99967M8.16634 12.8334C8.16634 12.8776 8.14878 12.9199 8.11753 12.9512C8.08627 12.9825 8.04388 13 7.99967 13C7.95547 13 7.91308 12.9825 7.88182 12.9512C7.85057 12.9199 7.83301 12.8776 7.83301 12.8334C7.83301 12.7891 7.85057 12.7468 7.88182 12.7155C7.91308 12.6842 7.95547 12.6667 7.99967 12.6667C8.04388 12.6667 8.08627 12.6842 8.11753 12.7155C8.14878 12.7468 8.16634 12.7891 8.16634 12.8334Z" stroke="#FAFAFA" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-chev" viewBox="0 0 24 24" fill="none"><path d="M18 9.00005C18 9.00005 13.5811 15 12 15C10.4188 15 6 9 6 9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<div class="banner">EARLY BIRD ACCESS — BOOK NOW &amp; ENJOY EXCLUSIVE EARLY ACCESS BENEFITS</div>
+
+<header class="site-head">
+  <div class="inner">
+    <a class="brand" href="#home" aria-label="GlideXAVPN home">
+      <svg aria-hidden="true"><use href="#lg-brand"/></svg>
+      <span>GLIDEXAVPN</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#home">HOME</a>
+      <a href="#app">APP</a>
+      <a href="#why-us">WHY US</a>
+      <a href="#pricing">PRICING</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn-dl" href="#pricing">DOWNLOAD NOW</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <div class="row" data-stripes="full" id="home">
+    <div class="gut l"></div>
+    <section class="col hero" aria-labelledby="hero-title">
+      <img class="dots" src="assets/dots.png" alt="">
+      <div class="hero-copy">
+        <h1 id="hero-title">STABLE PING. ZERO LAG. GAME LIKE NOTHING'S IN YOUR WAY</h1>
+        <p>GlideXAVPN keeps your connection rock-solid so every match runs smooth get your first month free, no strings attached.</p>
+      </div>
+      <a class="btn-light" href="#pricing">BOOKING NOW</a>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen"><img src="assets/screen.jpg" alt="GlideXAVPN app: Select Country set to Singapore, with the one-tap connect button"></div>
+          <i class="key k1"></i><i class="key k2"></i><i class="key k3"></i><i class="key k4"></i>
+        </div>
+      </div>
+    </section>
+    <div class="gut r"></div>
+  </div>
+
+  <!-- WAITLIST -->
+  <div class="strip">
+    <div class="ticks"></div>
+    <div class="mid"><div class="box">80+ EARLY ACCESS WAITLIST</div></div>
+    <div class="ticks"></div>
+  </div>
+
+  <!-- PARTNERS -->
+  <div class="partners" aria-label="Partners">
+    <div class="marquee">
+      <div class="track">
+        <div class="logo-item"><svg viewBox="0 0 32 38" aria-hidden="true"><use href="#lg-p1"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item"><svg viewBox="0 0 32 36" aria-hidden="true"><use href="#lg-p2"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#lg-p3"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item"><svg viewBox="0 0 32 31" aria-hidden="true"><use href="#lg-p4"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#lg-p5"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item" aria-hidden="true"><svg viewBox="0 0 32 38"><use href="#lg-p1"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item" aria-hidden="true"><svg viewBox="0 0 32 36"><use href="#lg-p2"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#lg-p3"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item" aria-hidden="true"><svg viewBox="0 0 32 31"><use href="#lg-p4"/></svg><span>Loremipsum</span></div>
+        <div class="logo-item" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#lg-p5"/></svg><span>Loremipsum</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div class="row" data-stripes="outer" id="app">
+    <div class="gut l"></div>
+    <section class="col app" aria-labelledby="app-title">
+      <img class="dots-diff" src="assets/dots.png" alt="">
+      <div class="app-head">
+        <span class="chip">APP</span>
+        <div class="sec-head">
+          <h2 class="h2" id="app-title">SHOW YOUR GAMING SKILL TO THE WORLD</h2>
+          <p class="lede">Purpose-built tunneling engineered for real-time gaming traffic so every shot, spawn, and reaction lands exactly when it should.</p>
+        </div>
+      </div>
+      <div class="features">
+        <article class="feature">
+          <div class="txt">
+            <h3>Built for zero lag</h3>
+            <p>Purpose-built tunneling engineered for real-time gaming traffic so every shot, spawn, and reaction lands exactly when it should.</p>
+          </div>
+          <img src="assets/feat1.jpg" alt="Speed gauge reading 569.47 Mbps with ping labels of 2 to 5 ms" loading="lazy">
+        </article>
+        <article class="feature">
+          <div class="txt">
+            <h3>Connect in one tap</h3>
+            <p>Skip manual server hunting. GLIDEXA auto-matches you to the fastest available server the moment you open the app.</p>
+          </div>
+          <img src="assets/feat2.jpg" alt="Server tiles for Singapore, Germany, France, Japan, South Korea and the Netherlands around the connect button" loading="lazy">
+        </article>
+        <article class="feature">
+          <div class="txt">
+            <h3>Privacy, not a policy</h3>
+            <p>No data selling, no tracking, no exceptions. Your identity and gameplay stay yours, always.</p>
+          </div>
+          <img src="assets/feat3.jpg" alt="Shield with a keyhole over a masked table of names, emails and phone numbers" loading="lazy">
+        </article>
+      </div>
+    </section>
+    <div class="gut r"></div>
+  </div>
+
+  <!-- WHY US -->
+  <div class="row bt" data-stripes="inner" id="why-us">
+    <div class="gut l"></div>
+    <section class="col why" aria-labelledby="why-title">
+      <span class="chip">WHY US</span>
+      <div class="why-body">
+        <div class="sec-head">
+          <h2 class="h2" id="why-title">WHY CHOOSE GLIDEXAVPN?</h2>
+          <p class="lede">Purpose-built tunneling engineered for real-time gaming traffic so every shot, spawn, and reaction lands exactly when it should.</p>
+        </div>
+        <div class="why-grid">
+          <div class="acc" id="why-acc">
+            <div class="acc-item" data-open>
+              <button class="acc-btn" type="button" id="why-1" aria-expanded="true" aria-controls="why-p1">
+                <span class="acc-title">Fastest</span>
+                <span class="acc-panel" id="why-p1">We’re currently working on speed optimization, so say goodbye for lagging in midgame</span>
+              </button>
+            </div>
+            <div class="acc-item">
+              <button class="acc-btn" type="button" id="why-2" aria-expanded="false" aria-controls="why-p2">
+                <span class="acc-title">Security First</span>
+                <span class="acc-panel" id="why-p2">We focused on building structure of the system to make sure your data is safe</span>
+              </button>
+            </div>
+            <div class="acc-item">
+              <button class="acc-btn" type="button" id="why-3" aria-expanded="false" aria-controls="why-p3">
+                <span class="acc-title">Integrity Reason</span>
+                <span class="acc-panel" id="why-p3">No logs, no hidden routing. The servers do exactly what the app says they do.</span>
+              </button>
+            </div>
+            <div class="acc-item">
+              <button class="acc-btn" type="button" id="why-4" aria-expanded="false" aria-controls="why-p4">
+                <span class="acc-title">Premium for free</span>
+                <span class="acc-panel" id="why-p4">Early access members get the full premium tier free for the first month.</span>
+              </button>
+            </div>
+          </div>
+          <img class="why-visual" src="assets/whyus.jpg" alt="Blue lightning bolt over a gaming scene, surrounded by 2 ms ping readouts" loading="lazy">
+        </div>
+      </div>
+    </section>
+    <div class="gut r"></div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="row bt" data-stripes="outer" id="pricing">
+    <div class="gut l"></div>
+    <section class="col pricing" aria-labelledby="price-title">
+      <div class="halftone"></div>
+      <img class="dots-diff" src="assets/dots.png" alt="">
+      <div class="pricing-head">
+        <span class="chip">PRICING</span>
+        <div class="sec-head">
+          <h2 class="h2" id="price-title">GET ONLINE NOW</h2>
+          <p class="lede">Get the best serve with only one click</p>
+        </div>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <div class="plan-head">
+            <h3>Basic</h3>
+            <div class="price"><b>Rp 49k/month</b><span class="badge">save 15%</span></div>
+          </div>
+          <ul class="perks">
+            <li><svg class="s14"><use href="#ic-clock"/></svg>1 Month</li>
+            <li class="dim"><svg class="s14"><use href="#ic-support"/></svg>24/7 Support</li>
+            <li><svg class="s14"><use href="#ic-lock"/></svg>Secure</li>
+            <li><svg><use href="#ic-magic"/></svg>Smart Selection</li>
+            <li><svg class="s14"><use href="#ic-ticket"/></svg>2 Priority Tickets/Month</li>
+            <li><svg class="s14"><use href="#ic-marketing"/></svg>No Ads</li>
+            <li><svg class="s14"><use href="#ic-globe"/></svg>Access to 1 Server</li>
+            <li><svg class="s14"><use href="#ic-task"/></svg>Partial Feature Lock</li>
+            <li><svg class="s14"><use href="#ic-monitor"/></svg>2 Device Permitted</li>
+          </ul>
+        </article>
+        <article class="plan">
+          <div class="plan-head">
+            <h3>Prime</h3>
+            <div class="price"><b>Rp 36k/month</b><span class="badge">save 30%</span></div>
+          </div>
+          <ul class="perks">
+            <li><svg class="s14"><use href="#ic-clock"/></svg>5+1 Month</li>
+            <li><svg class="s14"><use href="#ic-support"/></svg>24/7 Support</li>
+            <li><svg class="s14"><use href="#ic-lock"/></svg>Secure</li>
+            <li><svg><use href="#ic-magic"/></svg>Smart Selection</li>
+            <li><svg class="s14"><use href="#ic-ticket"/></svg>7 Priority Tickets/Month</li>
+            <li><svg class="s14"><use href="#ic-marketing"/></svg>No Ads</li>
+            <li><svg class="s14"><use href="#ic-globe"/></svg>Access to all Server</li>
+            <li><svg class="s14"><use href="#ic-task"/></svg>All Feature Unlock</li>
+            <li><svg class="s14"><use href="#ic-monitor"/></svg>3 Device Permitted</li>
+            <li><svg><use href="#ic-wifi"/></svg>Bandwith up to 2TB</li>
+          </ul>
+        </article>
+        <article class="plan">
+          <div class="plan-head">
+            <h3>Plus</h3>
+            <div class="price"><b>Rp 40k/month</b><span class="badge">save 23%</span></div>
+          </div>
+          <ul class="perks">
+            <li><svg class="s14"><use href="#ic-clock"/></svg>5+1 Month</li>
+            <li><svg class="s14"><use href="#ic-support"/></svg>24/7 Support</li>
+            <li><svg class="s14"><use href="#ic-lock"/></svg>Secure</li>
+            <li><svg><use href="#ic-magic"/></svg>Smart Selection</li>
+            <li><svg class="s14"><use href="#ic-ticket"/></svg>5 Priority Tickets/Month</li>
+            <li><svg class="s14"><use href="#ic-marketing"/></svg>No Ads</li>
+            <li><svg class="s14"><use href="#ic-globe"/></svg>Access to all Server</li>
+            <li><svg class="s14"><use href="#ic-task"/></svg>All Feature Unlock</li>
+            <li><svg class="s14"><use href="#ic-monitor"/></svg>3 Device Permitted</li>
+            <li><svg><use href="#ic-wifi"/></svg>Bandwith up to 1TB</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+    <div class="gut r"></div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="row bt bb" data-stripes="inner" id="faq">
+    <div class="gut l"></div>
+    <section class="col faq" aria-labelledby="faq-title">
+      <span class="chip">FAQ</span>
+      <div class="why-body">
+        <div class="sec-head">
+          <h2 class="h2" id="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+          <p class="sub">Everything you need to know about App. Can't find the answer you're looking for? Our support team is here to help.</p>
+        </div>
+        <div class="faq-list" id="faq-list">
+          <button class="q" type="button" id="faq-1" aria-expanded="true">
+            <span class="qt">What is GlideXAVPN?</span>
+            <span class="qa">GlideXAVPN is a VPN service designed to provide a faster, more stable, and secure connection for gaming, streaming, and everyday internet use.</span>
+            <svg aria-hidden="true"><use href="#ic-chev"/></svg>
+          </button>
+          <button class="q" type="button" id="faq-2" aria-expanded="false">
+            <span class="qt">How does GlideXAVPN improve my gaming experience?</span>
+            <span class="qa">It routes your game traffic through servers tuned for real-time play, which keeps ping low and steady and cuts the spikes that cause lag mid-match.</span>
+            <svg aria-hidden="true"><use href="#ic-chev"/></svg>
+          </button>
+          <button class="q" type="button" id="faq-3" aria-expanded="false">
+            <span class="qt">Can I choose my VPN server location?</span>
+            <span class="qa">Yes. Pick a country from the list, or let Smart Selection connect you to the fastest server automatically. Basic includes 1 server; Prime and Plus include all servers.</span>
+            <svg aria-hidden="true"><use href="#ic-chev"/></svg>
+          </button>
+          <button class="q" type="button" id="faq-4" aria-expanded="false">
+            <span class="qt">Does GlideXAVPN work on mobile devices?</span>
+            <span class="qa">Yes. The app runs on phones, and one account covers 2 to 3 devices depending on your plan.</span>
+            <svg aria-hidden="true"><use href="#ic-chev"/></svg>
+          </button>
+          <button class="q" type="button" id="faq-5" aria-expanded="false">
+            <span class="qt">Can I use GlideXAVPN for games and other apps?</span>
+            <span class="qa">Yes. Once connected, every app on the device goes through GlideXAVPN, including games, streaming and browsing.</span>
+            <svg aria-hidden="true"><use href="#ic-chev"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+    <div class="gut r"></div>
+  </div>
+
+  <!-- CTA -->
+  <div class="row bb" data-stripes="outer">
+    <div class="gut l"></div>
+    <section class="col cta" aria-labelledby="cta-title">
+      <img class="dots" src="assets/dots.png" alt="">
+      <div class="cta-copy">
+        <h2 class="h2" id="cta-title">GET YOUR PREMIUM ACCOUNT FOR FREE</h2>
+        <p>We’re currently working on speed optimization, so say goodbye for lagging in midgame</p>
+      </div>
+      <a class="btn-light" href="#pricing">GET YOURS NOW</a>
+    </section>
+    <div class="gut r"></div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="row" data-stripes="inner">
+  <div class="gut l"></div>
+  <div class="col">
+    <div class="foot-top">
+      <a class="brand" href="#home" aria-label="GlideXAVPN home">
+        <svg aria-hidden="true"><use href="#lg-brand"/></svg>
+        <span>GLIDEXAVPN</span>
+      </a>
+      <div class="foot-links">
+        <ul>
+          <li><a href="#home">HOME</a></li>
+          <li><a href="#app">APP</a></li>
+          <li><a href="#why-us">WHY US</a></li>
+          <li><a href="#pricing">PRICING</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <ul>
+          <li><a href="https://www.linkedin.com" target="_blank" rel="noopener">LINKEDIN</a></li>
+          <li><a href="https://x.com" target="_blank" rel="noopener">TWITTER</a></li>
+          <li><a href="https://www.instagram.com" target="_blank" rel="noopener">INSTAGRAM</a></li>
+        </ul>
+        <ul>
+          <li><a href="#home">PRIVACY POLICY</a></li>
+          <li><span>COPYRIGHT@2026</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <small>Copyright © 2026 PT Glidexa Inovasi Digital. All rights reserved.</small>
+      <div class="regs">
+        <img src="assets/komdigi.png" alt="Komdigi" width="69">
+        <img src="assets/pse.png" alt="PSE Lingkup Privat" width="124">
+      </div>
+    </div>
+  </div>
+  <div class="gut r"></div>
+</footer>
+
+<script>
+  // Why Us: single-open accordion (one item always open, like the Figma variants)
+  const acc = document.getElementById('why-acc');
+  acc.addEventListener('click', (e) => {
+    const btn = e.target.closest('.acc-btn');
+    if (!btn) return;
+    acc.querySelectorAll('.acc-item').forEach((item) => {
+      const b = item.querySelector('.acc-btn');
+      const open = b === btn;
+      item.toggleAttribute('data-open', open);
+      b.setAttribute('aria-expanded', String(open));
+    });
+  });
+
+  // FAQ: click to open, click again to close
+  const faq = document.getElementById('faq-list');
+  faq.addEventListener('click', (e) => {
+    const btn = e.target.closest('.q');
+    if (!btn) return;
+    const willOpen = btn.getAttribute('aria-expanded') !== 'true';
+    faq.querySelectorAll('.q').forEach((q) => q.setAttribute('aria-expanded', 'false'));
+    btn.setAttribute('aria-expanded', String(willOpen));
+  });
+</script>
+</body>
+</html>
